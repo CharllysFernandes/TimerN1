@@ -17,7 +17,7 @@ class Interface:
         self.total_horas_label.grid(row=1, column=0, pady=10, columnspan=3)  # columnspan para estender sobre as 3 colunas
 
         self.iniciar_button = tk.Button(root, text="Iniciar Trabalho", command=self.iniciar_trabalho)
-        self.iniciar_button.grid(row=2, column=1, pady=5, padx=5, columnspan=3)
+        self.iniciar_button.grid(row=2, column=0, pady=5, padx=5, columnspan=3)
 
         self.encerrar_button = tk.Button(root, text="Encerrar Trabalho", command=self.encerrar_trabalho, state=tk.DISABLED)
         self.encerrar_button.grid(row=2, column=1, pady=5, padx=5, columnspan=3)
