@@ -1,10 +1,11 @@
 import tkinter as tk
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from threading import Thread
 
 class Interface:
     def __init__(self, root):
         self.root = root
+
         self.root.title("Controles de Jornada e Pausas N1")
 
         self.label_tempo = tk.Label(root, text="00:00:00", font=("Helvetica", 24))
@@ -40,11 +41,29 @@ class Interface:
 
     def iniciar_cronometro(self):
         if not self.atualizando:
-            self.tempo_inicial = datetime.now()
+            agora = datetime.now()
+            if self.tempo_inicial is not None and agora.date() == self.tempo_inicial.date():
+                # Continua de onde parou no mesmo dia
+                tempo_passado = agora - self.tempo_inicial
+            else:
+                # Começa do zero em outro dia
+                tempo_passado = timedelta(seconds=0)
+                self.tempo_inicial = agora
+            self.tempo_inicial -= tempo_passado  # Ajusta o tempo inicial
             self.iniciar_cronometro_thread()
+            self.criar_log("\n"+ "________________" + "\n" + "Início de trabalho: {}".format(self.tempo_inicial.strftime("%Y-%m-%d %H:%M")))
 
     def encerrar_cronometro(self):
         self.atualizando = False
+        hora_encerramento = datetime.now()
+        tempo_trabalhado = hora_encerramento - self.tempo_inicial
+        tempo_formatado = "{:02}:{:02}:{:02}".format(
+            tempo_trabalhado.seconds // 3600, (tempo_trabalhado.seconds // 60) % 60, tempo_trabalhado.seconds % 60
+        )
+        mensagem = "Encerramento de trabalho: {}\nTotal de horas trabalhadas: {}".format(
+            hora_encerramento.strftime("%Y-%m-%d %H:%M"), tempo_formatado
+        )
+        self.criar_log(mensagem)
         if self.thread_cronometro is not None:
             self.thread_cronometro.join()  # Aguarda a finalização da thread
         self.iniciar_btn["state"] = tk.NORMAL
@@ -68,17 +87,44 @@ class Interface:
         self.thread_cronometro.start()
 
     def registrar_pausa_10(self):
-        # Lógica para registrar pausa de 10 minutos
-        pass
+        botao = self.pausa_10_btn
+        if botao.cget("text") == "Pausa 10":
+            botao.config(text="Retorno Pausa 10")
+        else:
+            botao.config(text="Pausa 10")
+            botao.config(state="disabled")
 
     def registrar_pausa_10_2(self):
-        # Lógica para registrar pausa de 10 minutos
-        pass
+        botao = self.pausa_10_2_btn
+        if botao.cget("text") == "Pausa 10":
+            botao.config(text="Retorno Pausa 10")
+        else:
+            botao.config(text="Pausa 10")
+            botao.config(state="disabled")
 
     def registrar_pausa_20(self):
         # Lógica para registrar pausa de 20 minutos
-        pass
+        botao = self.pausa_20_btn
+        if botao.cget("text") == "Pausa 20":
+            botao.config(text="Retorno Pausa 20")
+        else:
+            botao.config(text="Pausa 20")
+            botao.config(state="disabled")
 
     def registrar_pausa_10_he(self):
         # Lógica para registrar pausa de 10 minutos (HE)
-        pass
+        botao = self.pausa_10_he_btn
+        if botao.cget("text") == "Pausa 10 HE":
+            botao.config(text="Retorno Pausa 10")
+            self.contagem_regressiva(60)
+
+        else:
+            botao.config(text="Pausa 10 HE")
+            botao.config(state="disabled")
+
+    def criar_log(self, mensagem):
+        with open("Log.txt", "a") as arquivo_log:
+            arquivo_log.write(mensagem + "\n")
+
+
+    
