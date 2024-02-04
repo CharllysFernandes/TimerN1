@@ -6,6 +6,11 @@ class Interface:
     def __init__(self, root):
         self.root = root
 
+        self.tempo_pausa_10 = 10
+        self.tempo_pausa_20 = 20
+
+        self.atualizando = False
+
         self.root.title("Controles de Jornada e Pausas N1")
 
         self.label_tempo = tk.Label(root, text="00:00:00", font=("Helvetica", 24))
@@ -23,16 +28,16 @@ class Interface:
         pausas_frame = tk.Frame(root)
         pausas_frame.pack(pady=10)
 
-        self.pausa_10_btn = tk.Button(pausas_frame, text="Pausa 10", command=self.registrar_pausa_10)
+        self.pausa_10_btn = tk.Button(pausas_frame, text="Pausa 10")
         self.pausa_10_btn.grid(row=0, column=0, padx=5)
 
-        self.pausa_20_btn = tk.Button(pausas_frame, text="Pausa 20", command=self.registrar_pausa_20)
+        self.pausa_20_btn = tk.Button(pausas_frame, text="Pausa 20")
         self.pausa_20_btn.grid(row=0, column=1, padx=5)
 
-        self.pausa_10_2_btn = tk.Button(pausas_frame, text="Pausa 10", command=self.registrar_pausa_10_2)
+        self.pausa_10_2_btn = tk.Button(pausas_frame, text="Pausa 10")
         self.pausa_10_2_btn.grid(row=0, column=2, padx=5)
 
-        self.pausa_10_he_btn = tk.Button(pausas_frame, text="Pausa 10 HE", command=self.registrar_pausa_10_he)
+        self.pausa_10_he_btn = tk.Button(pausas_frame, text="Pausa 10 HE", command=lambda: self.iniciar_contagem_pausa(self.pausa_10_he_btn))
         self.pausa_10_he_btn.grid(row=0, column=3, padx=5)
 
         self.tempo_inicial = None
@@ -86,45 +91,25 @@ class Interface:
         self.thread_cronometro.daemon = True  # Define a thread como "daemon"
         self.thread_cronometro.start()
 
-    def registrar_pausa_10(self):
-        botao = self.pausa_10_btn
-        if botao.cget("text") == "Pausa 10":
-            botao.config(text="Retorno Pausa 10")
-        else:
-            botao.config(text="Pausa 10")
-            botao.config(state="disabled")
-
-    def registrar_pausa_10_2(self):
-        botao = self.pausa_10_2_btn
-        if botao.cget("text") == "Pausa 10":
-            botao.config(text="Retorno Pausa 10")
-        else:
-            botao.config(text="Pausa 10")
-            botao.config(state="disabled")
-
-    def registrar_pausa_20(self):
-        # Lógica para registrar pausa de 20 minutos
-        botao = self.pausa_20_btn
-        if botao.cget("text") == "Pausa 20":
-            botao.config(text="Retorno Pausa 20")
-        else:
-            botao.config(text="Pausa 20")
-            botao.config(state="disabled")
-
-    def registrar_pausa_10_he(self):
-        # Lógica para registrar pausa de 10 minutos (HE)
-        botao = self.pausa_10_he_btn
-        if botao.cget("text") == "Pausa 10 HE":
-            botao.config(text="Retorno Pausa 10")
-            self.contagem_regressiva(60)
-
-        else:
-            botao.config(text="Pausa 10 HE")
-            botao.config(state="disabled")
-
     def criar_log(self, mensagem):
         with open("Log.txt", "a") as arquivo_log:
             arquivo_log.write(mensagem + "\n")
 
 
-    
+    def iniciar_contagem_pausa(self, botao):
+        if not self.atualizando:
+            self.atualizando = True
+            self.atualizar_contagem_regressiva(botao)
+        else:
+            self.atualizando = False
+            botao.config(text="Pausa 10 HE")
+            botao.config(state="disabled")
+
+    def atualizar_contagem_regressiva(self, botao):
+        if self.atualizando:
+            minutos, segundos = divmod(abs(self.tempo_pausa_10), 60)
+            sinal = "+" if self.tempo_pausa_10 < 0 else "-"
+            tempo_formatado = "{}{:02}:{:02}".format(sinal, minutos, segundos)
+            botao.config(text="Encerrar ({})".format(tempo_formatado))
+            self.tempo_pausa_10 -= 1 if self.tempo_pausa_10 >= 0 else +1
+            self.root.after(1000, lambda: self.atualizar_contagem_regressiva(botao))
