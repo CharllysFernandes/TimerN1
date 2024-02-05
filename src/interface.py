@@ -28,13 +28,13 @@ class Interface:
         pausas_frame = tk.Frame(root)
         pausas_frame.pack(pady=10)
 
-        self.pausa_10_btn = tk.Button(pausas_frame, text="Pausa 10")
+        self.pausa_10_btn = tk.Button(pausas_frame, text="Pausa 10", command=lambda: self.iniciar_contagem_pausa(self.pausa_10_btn))
         self.pausa_10_btn.grid(row=0, column=0, padx=5)
 
-        self.pausa_20_btn = tk.Button(pausas_frame, text="Pausa 20")
+        self.pausa_20_btn = tk.Button(pausas_frame, text="Pausa 20", command=lambda: self.iniciar_contagem_pausa(self.pausa_20_btn))
         self.pausa_20_btn.grid(row=0, column=1, padx=5)
 
-        self.pausa_10_2_btn = tk.Button(pausas_frame, text="Pausa 10")
+        self.pausa_10_2_btn = tk.Button(pausas_frame, text="Pausa 10", command= lambda: self.iniciar_contagem_pausa(self.pausa_10_2_btn))
         self.pausa_10_2_btn.grid(row=0, column=2, padx=5)
 
         self.pausa_10_he_btn = tk.Button(pausas_frame, text="Pausa 10 HE", command=lambda: self.iniciar_contagem_pausa(self.pausa_10_he_btn))
