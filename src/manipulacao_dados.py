@@ -10,9 +10,9 @@ class ManipuladorDados:
         # Aqui você poderia adicionar a lógica para atualizar a interface com o tempo decorrido
         pass
 
-    def registrar_pausa(self, timestamp, tempo_pausa):
-        if tempo_pausa > 0:
-            mensagem = "Início de Pausa: {}".format(timestamp.strftime("%Y-%m-%d %H:%M"))
-        else:
-            mensagem = "Fim de Pausa: {}".format(timestamp.strftime("%Y-%m-%d %H:%M"))
-        self.criar_log(mensagem)
+    # def registrar_pausa(self, timestamp, tempo_pausa):
+    #     if tempo_pausa > 0:
+    #         mensagem = "Início de Pausa: {}".format(timestamp.strftime("%Y-%m-%d %H:%M"))
+    #     else:
+    #         mensagem = "Fim de Pausa: {}".format(timestamp.strftime("%Y-%m-%d %H:%M"))
+    #     self.criar_log(mensagem)

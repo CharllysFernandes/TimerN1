@@ -47,15 +47,15 @@ class Controle:
         self.thread_cronometro.daemon = True  # Define a thread como "daemon"
         self.thread_cronometro.start()
 
-    # def atualizar_cronometro(self):
-    #     while self.atualizando:
-    #         tempo_atual = datetime.now() - self.tempo_inicial if self.tempo_inicial else timedelta(seconds=0)
-    #         tempo_formatado = "{:02}:{:02}:{:02}".format(
-    #             tempo_atual.seconds // 3600, (tempo_atual.seconds // 60) % 60, tempo_atual.seconds % 60
-    #         )
-    #         self.interface.label_tempo.config(text=tempo_formatado)
-    #         # Atualizar a cada segundo
-    #         time.sleep(1)
+    def atualizar_cronometro(self):
+        while self.atualizando:
+            tempo_atual = datetime.now() - self.tempo_inicial if self.tempo_inicial else timedelta(seconds=0)
+            tempo_formatado = "{:02}:{:02}:{:02}".format(
+                tempo_atual.seconds // 3600, (tempo_atual.seconds // 60) % 60, tempo_atual.seconds % 60
+            )
+            self.interface.label_tempo.config(text=tempo_formatado)
+            # Atualizar a cada segundo
+            time.sleep(1)
 
     def atualizar_contagem_regressiva(self, botao, tempo_em_segundos_pausa):
         if self.atualizando_pausa:
@@ -68,7 +68,7 @@ class Controle:
 
             botao.config(text="Encerrar ({})".format(tempo_formatado), fg=cor_texto)
             tempo_em_segundos_pausa -= 1 if tempo_em_segundos_pausa >= 0 else +1 
-            self.root.interface.after(1000, lambda: self.atualizar_contagem_regressiva(botao, tempo_em_segundos_pausa))
+            self.interface.after(1000, lambda: self.atualizar_contagem_regressiva(botao, tempo_em_segundos_pausa))
 
     # def iniciar_contagem_pausa(self, tempo_pausa):
     #     agora = datetime.now()
@@ -79,10 +79,14 @@ class Controle:
         if not self.atualizando_pausa:
             self.atualizando_pausa = True
             self.atualizar_contagem_regressiva(botao, tempo)
-            self.manipulador_dados.registrar_pausa(botao, agora)
+            # self.manipulador_dados.registrar_pausa(botao, agora)
+            mensagem = "{} de Pausa {}: {}".format(botao["text"], tempo // 60, agora.strftime("%Y-%m-%d %H:%M"))
+            self.manipulador_dados.criar_log(mensagem)
+
+            
         else:
             self.atualizando_pausa = False
             # botao.config(text="Pausa 10 HE")
             botao.config(state="disabled")
-            self.manipulador_dados.registrar_pausa(botao, agora)
+            # self.manipulador_dados.registrar_pausa(botao, agora)
             
